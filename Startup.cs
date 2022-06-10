@@ -7,10 +7,13 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection; 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using FlashNote.Data;
+using Microsoft.EntityFrameworkCore;
+using AutoMapper;
+
 
 namespace FlashNote
 {
@@ -26,8 +29,12 @@ namespace FlashNote
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<FlashNoteContext>(opt=> opt.UseSqlServer
+            (Configuration.GetConnectionString("FlashConnection")));
             services.AddControllers();
-            services.AddScoped<IFlashNoteRepo, MockRepo>();
+            services.AddScoped<IFlashNoteRepo, SqlRepo>();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
