@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using FlashNote.Models;
 using FlashNote.Data;
+using AutoMapper;
+using FlashNote.Dtos;
 
 namespace FlashNote.Controllers
 {
@@ -14,8 +16,11 @@ namespace FlashNote.Controllers
     public class FlashNoteController : ControllerBase
     {
         private readonly IFlashNoteRepo _repository;
-        public FlashNoteController(IFlashNoteRepo repo){
+        private readonly IMapper _mapper;
+
+        public FlashNoteController(IFlashNoteRepo repo, IMapper mapper){
             _repository = repo;
+            _mapper = mapper;
         }
         // GET api/cards
         [HttpGet]
@@ -24,9 +29,26 @@ namespace FlashNote.Controllers
             return Ok(_repository.GetAllCards());
         }
 
-        [HttpGet("{id}")]
+        // GET api/cards/{id}
+        [HttpGet("{id}", Name="GetCardByID")]
         public ActionResult <FlashCard> GetCardByID(int id){
-            return Ok(_repository.GetCardByID(id));
+            var cardItem = _repository.GetCardByID(id);
+            if (cardItem != null)
+                return Ok(cardItem);
+            return NotFound();
         }
+
+        // POST api/cards/
+        [HttpPost]
+        public ActionResult <FlashCard> CreateCard(FlashCardCreateDto cardCreateDto)
+        {
+            var flashCardModel = _mapper.Map<FlashCard>(cardCreateDto);
+            _repository.CreateCard(flashCardModel);
+            _repository.SaveChanges();
+
+            return CreatedAtRoute(nameof(GetCardByID), new {Id =flashCardModel.Id },flashCardModel );
+    
+        }
+
     }
 }

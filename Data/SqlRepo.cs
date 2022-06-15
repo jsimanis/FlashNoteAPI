@@ -1,6 +1,7 @@
 using FlashNote.Models;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace FlashNote.Data
 {
@@ -18,6 +19,20 @@ namespace FlashNote.Data
 
         public FlashCard GetCardByID(int id){ //???
             return _context.FlashCards.FirstOrDefault(p => p.Id == id);
+        }
+
+        public void CreateCard(FlashCard newCard){
+            if (newCard == null){
+                throw new ArgumentNullException();
+            }
+
+            _context.FlashCards.Add(newCard);
+
+        }
+        
+        public bool SaveChanges()
+        {
+            return (_context.SaveChanges() >= 0);
         }
     }
 }
