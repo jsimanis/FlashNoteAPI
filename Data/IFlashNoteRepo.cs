@@ -7,7 +7,9 @@ namespace FlashNote.Data
     {
          IEnumerable<FlashCard> GetAllCards();
          FlashCard GetCardByID(int id);
-         void CreateCard(FlashCard newCard); //dont show implentation details
          bool SaveChanges();
+         void CreateCard(FlashCard newCard); //dont show implentation details
+         void UpdateCard(FlashCard card);
+         void DeleteCard(FlashCard card);
     }
 }

@@ -10,6 +10,8 @@ namespace FlashNote.Profiles
         {
             //Source -> target
             CreateMap<FlashCardCreateDto, FlashCard>();
+            CreateMap<FlashCardUpdateDto, FlashCard>();
+            CreateMap<FlashCard, FlashCardUpdateDto>();
         }
     }
 }

@@ -29,10 +29,24 @@ namespace FlashNote.Data
             _context.FlashCards.Add(newCard);
 
         }
-        
+
+        public void UpdateCard(FlashCard card)
+        {
+            //Do Nothing
+        }
+
+        public void DeleteCard(FlashCard card)
+        {
+            if (card == null){
+                throw new ArgumentNullException();
+            }
+            _context.FlashCards.Remove(card);
+        }
         public bool SaveChanges()
         {
             return (_context.SaveChanges() >= 0);
         }
+
+        
     }
 }

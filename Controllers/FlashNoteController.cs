@@ -8,6 +8,7 @@ using FlashNote.Models;
 using FlashNote.Data;
 using AutoMapper;
 using FlashNote.Dtos;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace FlashNote.Controllers
 {
@@ -50,5 +51,56 @@ namespace FlashNote.Controllers
     
         }
 
+        //PUT api/cards/{id}
+        [HttpPut("{id}")]
+        public ActionResult UpdateCard(int id, FlashCardUpdateDto cardUpdateDto){
+            var flashCardModel = _repository.GetCardByID(id);
+            if (flashCardModel == null)
+            {
+                return NotFound();
+            }
+            _mapper.Map(cardUpdateDto, flashCardModel); //will update
+            _repository.UpdateCard(flashCardModel);
+            _repository.SaveChanges();
+            return NoContent();
+        }
+
+        //DELETE api/commands/{id}
+        [HttpDelete("{id}")]
+        public ActionResult DeleteCard(int id){
+            var flashCardModel = _repository.GetCardByID(id);
+            if (flashCardModel == null)
+            {
+                return NotFound();
+            }
+            _repository.DeleteCard(flashCardModel);
+            _repository.SaveChanges();
+            return NoContent();
+
+        }
+
+        //PATCH api/commands/{id}
+        [HttpPatch("id")]
+        public ActionResult PartialCardUpdate(int id , JsonPatchDocument<FlashCardUpdateDto> patchDoc)
+        {
+            var flashCardModel = _repository.GetCardByID(id);
+            if (flashCardModel == null)
+            {
+                return NotFound();
+            }
+
+            var cardToPatch = _mapper.Map<FlashCardUpdateDto>(flashCardModel);
+            patchDoc.ApplyTo(cardToPatch, ModelState);
+            if (!TryValidateModel(cardToPatch))
+            {
+                return ValidationProblem(ModelState);
+            }
+
+            _mapper.Map(cardToPatch, flashCardModel);
+            _repository.UpdateCard(flashCardModel);
+            _repository.SaveChanges();
+            return NoContent();
+
+        }
     }
 }

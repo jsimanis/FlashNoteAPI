@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using FlashNote.Data;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using Newtonsoft.Json.Serialization;
 
 
 namespace FlashNote
@@ -31,7 +32,9 @@ namespace FlashNote
         {
             services.AddDbContext<FlashNoteContext>(opt=> opt.UseSqlServer
             (Configuration.GetConnectionString("FlashConnection")));
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson( s => {
+                s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            });
             services.AddScoped<IFlashNoteRepo, SqlRepo>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
